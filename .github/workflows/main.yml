@@ -1,0 +1,23 @@
+on:
+  push:
+
+jobs:
+  code-formatter:
+    name: "code formatter"
+    uses: jcergolj/reusable-github-actions/.github/workflows/code-formatter.yml@master
+    with:
+      skip-npm: true
+
+  larastan:
+    name: "larastan"
+    uses: jcergolj/reusable-github-actions/.github/workflows/larastan.yml@master
+
+  envy:
+    name: "envy"
+    uses: jcergolj/reusable-github-actions/.github/workflows/envy.yml@master
+
+  tests:
+    name: "tests"
+    uses: jcergolj/reusable-github-actions/.github/workflows/tests.yml@master
+    with:
+      install-tailwind-css: true

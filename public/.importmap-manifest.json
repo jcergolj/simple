@@ -1,0 +1,147 @@
+[
+    {
+        "module": "@hotwired/turbo",
+        "path": "dist/js/vendor/@hotwired--turbo-78f617e982e7c0da435f6f71ac3009c013ea284f.js",
+        "preload": true
+    },
+    {
+        "module": "laravel-echo",
+        "path": "dist/js/vendor/laravel-echo-eade90c715f34ae1086aa8c67191a46cb9f1548b.js",
+        "preload": true
+    },
+    {
+        "module": "pusher-js",
+        "path": "dist/js/vendor/pusher-js-15b19ec2dbd62b931a54857326819ded80a7647a.js",
+        "preload": true
+    },
+    {
+        "module": "@hotwired/hotwire-native-bridge",
+        "path": "dist/js/vendor/@hotwired--hotwire-native-bridge-e9827c6e1d83a0a09f6bae8f4a039950f7c20b66.js",
+        "preload": true
+    },
+    {
+        "module": "@hotwired/stimulus",
+        "path": "dist/js/vendor/@hotwired--stimulus-81c84ed60b06803bacdece6ac9c6b180976a753c.js",
+        "preload": true
+    },
+    {
+        "module": "@hotwired/stimulus-loading",
+        "path": "dist/vendor/stimulus-laravel/stimulus-loading-f333baa654b39203fca37688a9068c334b5e4523.js",
+        "preload": true
+    },
+    {
+        "module": "app",
+        "path": "dist/js/app-61b4fafa8ba7f380a31db8a7f13826a5a781cbcc.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/autosave_controller",
+        "path": "dist/js/controllers/autosave_controller-d5594a95d2810a5c13243b2ee36418d7c364f3f5.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/bridge/form_controller",
+        "path": "dist/js/controllers/bridge/form_controller-3888aa1e8b3c897bb785ba111901962d074b0331.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/bridge/toast_controller",
+        "path": "dist/js/controllers/bridge/toast_controller-4aafe3e042006c0adf0af1c4d81be9eac8794b69.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/delete_toggle_controller",
+        "path": "dist/js/controllers/delete_toggle_controller-2a40c91d1f66c3fa0c7151ea9cecea6fb7d2cd44.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/flash_controller",
+        "path": "dist/js/controllers/flash_controller-8ace611efcc54f452e7c03505308b98c61df4397.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/hello_controller",
+        "path": "dist/js/controllers/hello_controller-ab1f92031ef97b96f080fc36a4f4e5954164876e.js",
+        "preload": true
+    },
+    {
+        "module": "controllers",
+        "path": "dist/js/controllers/index-d5950187c655bd000897b09fa4bea446a252eb61.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/inline_edit_controller",
+        "path": "dist/js/controllers/inline_edit_controller-d5e2586ef2b06acedc30b263789d6b426639423f.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/keyboard_shortcuts_controller",
+        "path": "dist/js/controllers/keyboard_shortcuts_controller-6fbc3c3073a5f5754551d4fd7437024144265550.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/mobile_menu_controller",
+        "path": "dist/js/controllers/mobile_menu_controller-56dfac2525b9c8b52034de05c5a6d312a25dd8bf.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/password_reveal_controller",
+        "path": "dist/js/controllers/password_reveal_controller-e5af32c755ab0a0829bfe5cf8526d0150bc61443.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/project_prefill_controller",
+        "path": "dist/js/controllers/project_prefill_controller-334b4cddf8b166c168c24b3dfe1a0e1882057f50.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/search_clients_controller",
+        "path": "dist/js/controllers/search_clients_controller-b1f057e7734e07a3f2ca483da56d1201f96fe60c.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/search_projects_controller",
+        "path": "dist/js/controllers/search_projects_controller-b77071d4f676b2141f458cb5ef8022f648b22326.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/sidebar_controller",
+        "path": "dist/js/controllers/sidebar_controller-b1990218760a98466584219ada61659ab131aa2a.js",
+        "preload": true
+    },
+    {
+        "module": "controllers/timer_controller",
+        "path": "dist/js/controllers/timer_controller-12b47665d29699f3c8e123bd4efcb892f951a2fe.js",
+        "preload": true
+    },
+    {
+        "module": "elements/turbo-echo-stream-tag",
+        "path": "dist/js/elements/turbo-echo-stream-tag-8b5f8927773bfcd42d30721118c4c318a909ed28.js",
+        "preload": true
+    },
+    {
+        "module": "helpers",
+        "path": "dist/js/helpers/index-8ab4dc83c61aa0ad582100bdcb4751b19e2446d2.js",
+        "preload": true
+    },
+    {
+        "module": "helpers/timing_helpers",
+        "path": "dist/js/helpers/timing_helpers-3666285c66b29eb46ba4d1dde4a4a6c090e8fbb3.js",
+        "preload": true
+    },
+    {
+        "module": "libs",
+        "path": "dist/js/libs/index-7c2a024ebfceada7068035000c0928dadb883c2c.js",
+        "preload": true
+    },
+    {
+        "module": "libs/stimulus",
+        "path": "dist/js/libs/stimulus-f3da2e1f6cbb8fc81117fd9eef41e1e012046e53.js",
+        "preload": true
+    },
+    {
+        "module": "libs/turbo",
+        "path": "dist/js/libs/turbo-0ef9c3fdd760194c5e2b90e02605fa93e807cf8a.js",
+        "preload": true
+    }
+]
