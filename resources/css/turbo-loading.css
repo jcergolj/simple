@@ -1,0 +1,59 @@
+/* Turbo Frame Loading States */
+turbo-frame[loading="lazy"] {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Hide loading state when turbo frame is being loaded */
+turbo-frame[aria-busy="true"] select {
+    background-color: #f9fafb !important;
+    opacity: 0.7;
+    transition: opacity 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+/* Smooth transition when content loads */
+turbo-frame select {
+    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* Loading shimmer effect for project filters */
+turbo-frame[aria-busy="true"] select option:first-child {
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Reduce layout shift by maintaining consistent height */
+turbo-frame select {
+    min-height: 2.5rem; /* h-10 equivalent */
+}
+
+/* Improve perceived performance with skeleton loading */
+.project-filter-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 0.375rem;
+    height: 2.5rem;
+}
+
+@keyframes loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}

@@ -1,0 +1,113 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "jcergolj/simple",
+    "type": "project",
+    "description": "Simple - time tracking application built with Laravel, Hotwire, and Tailwind CSS.",
+    "keywords": [
+        "laravel",
+        "framework",
+        "hotwire"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "blade-ui-kit/blade-heroicons": "^2.6",
+        "hotwired-laravel/stimulus-laravel": "^1.2",
+        "hotwired-laravel/turbo-laravel": "^2.3",
+        "jcergolj/after-action-redirect-pagination-url-for-laravel": "^2.6",
+        "jcergolj/in-app-notifications-for-laravel": "^1.0",
+        "laravel/framework": "^12.0",
+        "laravel/tinker": "^2.10.1",
+        "tonysm/importmap-laravel": "^2.4",
+        "tonysm/tailwindcss-laravel": "^2.2"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "hotwired-laravel/hotreload": "^0.0.8",
+        "laravel/pail": "^1.2.2",
+        "laravel/sail": "^1.41",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "soloterm/solo": "^0.5.0",
+        "jcergolj/additional-test-assertions-for-laravel": "^2.2",
+        "jcergolj/http-client-generator-for-laravel": "dev-master",
+        "jcergolj/laravel-form-request-assertions": "^1.5",
+        "jcergolj/laravel-view-test-assertions": "^2.7",
+        "jcergolj/rector-for-laravel": "^0.7.0",
+        "larastan/larastan": "^3.0",
+        "laravel/boost": "^1.0",
+        "laravel/pint": "^1.18",
+        "phpunit/phpunit": "^12.0",
+        "worksome/envy": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan tailwindcss:download --force",
+            "@php artisan tailwindcss:build",
+            "@php artisan storage:link",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "php artisan solo"
+        ],
+        "dev:overmind": [
+            "Composer\\Config::disableProcessTimeout",
+            "overmind start"
+        ],
+        "phpstan": "./vendor/bin/phpstan analyse --memory-limit=2G",
+        "env-sync": "php artisan envy:sync --dry",
+        "env-prune": "php artisan envy:prune --dry",
+        "pint": "vendor/bin/pint",
+        "rector": "vendor/bin/rector",
+        "test": "php artisan test",
+        "analyse": [
+            "@env-sync",
+            "@env-prune",
+            "@phpstan",
+            "@rector",
+            "@pint", 
+            "@test"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
