@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__laravel-boost__last-error",
+      "mcp__laravel-boost__application-info",
+      "mcp__laravel-boost__search-docs",
+      "mcp__laravel-boost__list-routes",
+      "Bash(php artisan make:cast:*)",
+      "Bash(php artisan make:migration:*)",
+      "Bash(php artisan make:model:*)",
+      "Bash(php artisan make:factory:*)",
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(php artisan make:controller:*)",
+      "Bash(vendor/bin/pint:*)",
+      "Bash(composer require:*)",
+      "mcp__laravel-boost__tinker",
+      "mcp__laravel-boost__get-absolute-url",
+      "WebFetch(domain:daisyui.com)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "mcp__laravel-boost__database-schema",
+      "Read(//home/jcergolj/work/projects/enneagramprofiling/**)",
+      "Bash(php artisan:*)",
+      "Bash(php:*)",
+      "Bash(npm run build:*)",
+      "mcp__laravel-boost__browser-logs",
+      "Bash(./vendor/bin/phpstan analyse:*)",
+      "Bash(rm:*)",
+      "mcp__laravel-boost__list-available-env-vars",
+      "mcp__laravel-boost__get-config",
+      "mcp__laravel-boost__database-query",
+      "Bash(composer run:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
+}

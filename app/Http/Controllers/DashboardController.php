@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\TimeEntry;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+
+class DashboardController extends Controller
+{
+    public function index(Request $request)
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        $weeklyEntries = TimeEntry::with(['client', 'project'])
+            ->whereBetween('start_time', [$startOfWeek, $endOfWeek])
+            ->whereNotNull('end_time')
+            ->get();
+
+        $totalHours = $weeklyEntries->sum('duration') / 3600;
+
+        $billableAmount = $weeklyEntries->reduce(function ($carry, $entry) {
+            $earnings = $entry->calculateEarnings();
+            if ($earnings) {
+                return $carry + $earnings->amount;
+            }
+
+            return $carry;
+        }, 0);
+
+        $recentEntries = TimeEntry::with(['client', 'project'])
+            ->latest('start_time')
+            ->limit(5)
+            ->get();
+
+        $lastEntry = $recentEntries->first();
+
+        $runningTimer = TimeEntry::whereNull('end_time')->first();
+
+        $preselectedClientId = $request->get('client_id', $lastEntry->client_id);
+        $preselectedClientName = $request->get('client_name', $lastEntry->client?->name);
+        $preselectedProjectId = $request->get('project_id', $lastEntry->project_id);
+        $preselectedProjectName = $request->get('project_name', $lastEntry->project?->name);
+
+        return view('dashboard', ['totalHours' => $totalHours, 'billableAmount' => $billableAmount, 'recentEntries' => $recentEntries, 'lastEntry' => $lastEntry, 'runningTimer' => $runningTimer, 'preselectedClientId' => $preselectedClientId, 'preselectedClientName' => $preselectedClientName, 'preselectedProjectId' => $preselectedProjectId, 'preselectedProjectName' => $preselectedProjectName]);
+    }
+}
