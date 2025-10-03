@@ -101,7 +101,37 @@ class TimeEntryController extends Controller
 
         Log::channel('time-entries')->info('time-entry-created', $timeEntry->toArray());
 
-        return to_route('time-entries.index');
+        // Fetch updated list with filters applied
+        $query = TimeEntry::with(['client', 'project']);
+
+        if ($request->filled('client_id')) {
+            $query->where('client_id', $request->client_id);
+        }
+
+        if ($request->filled('project_id')) {
+            $query->where('project_id', $request->project_id);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('start_time', '>=', Carbon::parse($request->date_from));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('start_time', '<=', Carbon::parse($request->date_to)->endOfDay());
+        }
+
+        $timeEntries = $query->latest('start_time')->paginate(20);
+
+        $clients = Client::all();
+        $projects = Project::with('client')->get();
+
+        return response()
+            ->view('turbo::time-entries.store', [
+                'timeEntries' => $timeEntries,
+                'clients' => $clients,
+                'projects' => $projects,
+            ])
+            ->header('Content-Type', 'text/vnd.turbo-stream.html');
     }
 
     public function update(Request $request, TimeEntry $timeEntry)
@@ -109,7 +139,7 @@ class TimeEntryController extends Controller
         try {
             $validated = $request->validate([
                 'start_time' => ['required', 'date'],
-                'end_time' => ['nullable', 'date', 'after:start_time'],
+                'end_time' => ['required', 'date', 'after:start_time'],
                 'duration' => ['nullable', 'integer', 'min:0'],
                 'notes' => ['nullable', 'string'],
                 'client_id' => ['nullable', 'exists:clients,id'],
@@ -167,6 +197,8 @@ class TimeEntryController extends Controller
 
         InAppNotification::success(__('Time entry successfully updated.'));
 
+        Log::channel('time-entries')->info('time-entry-updated', $timeEntry->fresh()->toArray());
+
         // Check if this update came from the recent entries section
         if ($request->header('turbo-frame') === "recent-entry-{$timeEntry->id}") {
             // Load fresh data for the recent entries
@@ -191,8 +223,6 @@ class TimeEntryController extends Controller
             // Fetch running timer to maintain correct button states
             $runningTimer = TimeEntry::whereNull('end_time')->first();
 
-            Log::channel('time-entries')->info('time-entry-updated', $timeEntry->fresh()->toArray());
-
             return response()
                 ->view('timer-sessions.recent-entry-update', [
                     'timeEntry' => $timeEntry->fresh(['client', 'project']),
@@ -205,7 +235,38 @@ class TimeEntryController extends Controller
                 ->header('Content-Type', 'text/vnd.turbo-stream.html');
         }
 
-        return to_route('time-entries.index');
+        // Fetch updated list with filters applied
+        $query = TimeEntry::with(['client', 'project']);
+
+        if ($request->filled('client_id')) {
+            $query->where('client_id', $request->client_id);
+        }
+
+        if ($request->filled('project_id')) {
+            $query->where('project_id', $request->project_id);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('start_time', '>=', Carbon::parse($request->date_from));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('start_time', '<=', Carbon::parse($request->date_to)->endOfDay());
+        }
+
+        $timeEntries = $query->latest('start_time')->paginate(20);
+
+        $clients = Client::all();
+        $projects = Project::with('client')->get();
+
+        return response()
+            ->view('turbo::time-entries.update', [
+                'timeEntry' => $timeEntry->fresh(['client', 'project']),
+                'timeEntries' => $timeEntries,
+                'clients' => $clients,
+                'projects' => $projects,
+            ])
+            ->header('Content-Type', 'text/vnd.turbo-stream.html');
     }
 
     public function destroy(Request $request, TimeEntry $timeEntry)

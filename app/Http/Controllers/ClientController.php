@@ -65,7 +65,21 @@ class ClientController extends Controller
             ]);
         }
 
-        return to_intended_route('clients.index');
+        // Fetch updated list with filters applied
+        $query = Client::withCount(['projects', 'timeEntries']);
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where('name', 'like', '%'.$search.'%');
+        }
+
+        $clients = $query->orderBy('name')->paginate(10)->withQueryString();
+
+        return response()
+            ->view('turbo::clients.store', [
+                'clients' => $clients,
+            ])
+            ->header('Content-Type', 'text/vnd.turbo-stream.html');
     }
 
     public function update(Request $request, Client $client)
@@ -95,7 +109,22 @@ class ClientController extends Controller
 
         InAppNotification::success(__('Client successfully updated.'));
 
-        return to_route('clients.index');
+        // Fetch updated list with filters applied
+        $query = Client::withCount(['projects', 'timeEntries']);
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where('name', 'like', '%'.$search.'%');
+        }
+
+        $clients = $query->orderBy('name')->paginate(10)->withQueryString();
+
+        return response()
+            ->view('turbo::clients.update', [
+                'client' => $client->fresh()->loadCount(['projects', 'timeEntries']),
+                'clients' => $clients,
+            ])
+            ->header('Content-Type', 'text/vnd.turbo-stream.html');
     }
 
     public function destroy(Client $client)

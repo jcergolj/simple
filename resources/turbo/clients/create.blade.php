@@ -8,7 +8,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('clients.store') }}" method="POST" class="space-y-6" data-turbo-frame="_top">
+    <form action="{{ route('clients.store') }}" method="POST" class="space-y-6" data-turbo-frame="client-create-form">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -44,11 +44,12 @@ class ProjectController extends Controller
         try {
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
-                'client_id' => ['nullable', 'exists:clients,id'],
+                'client_id' => ['required', 'exists:clients,id'],
                 'hourly_rate_amount' => ['nullable', 'numeric', 'min:0'],
                 'hourly_rate_currency' => 'required_with:hourly_rate_amount|string|in:'.implode(',', array_column(\App\Enums\Currency::cases(), 'value')),
             ], [
                 'name.required' => 'Project name is required.',
+                'client_id.required' => 'Client is required.',
                 'client_id.exists' => 'Selected client does not exist.',
                 'hourly_rate_amount.numeric' => 'Hourly rate must be a valid number.',
                 'hourly_rate_amount.min' => 'Hourly rate must be at least 0.',
@@ -68,7 +69,7 @@ class ProjectController extends Controller
 
         $project = Project::create([
             'name' => $validated['name'],
-            'client_id' => empty($validated['client_id']) ? null : $validated['client_id'],
+            'client_id' => $validated['client_id'],
             'hourly_rate' => $hourlyRate,
         ]);
 
@@ -88,7 +89,26 @@ class ProjectController extends Controller
             ]);
         }
 
-        return to_route('projects.index');
+        // Fetch updated list with filters applied
+        $query = Project::with('client')->withCount('timeEntries');
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function (\Illuminate\Contracts\Database\Query\Builder $q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhereHas('client', function (\Illuminate\Contracts\Database\Query\Builder $clientQuery) use ($search) {
+                        $clientQuery->where('name', 'like', '%'.$search.'%');
+                    });
+            });
+        }
+
+        $projects = $query->paginate(10)->withQueryString();
+
+        return response()
+            ->view('turbo::projects.store', [
+                'projects' => $projects,
+            ])
+            ->header('Content-Type', 'text/vnd.turbo-stream.html');
     }
 
     public function edit(Project $project)
@@ -104,11 +124,12 @@ class ProjectController extends Controller
         try {
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
-                'client_id' => ['nullable', 'exists:clients,id'],
+                'client_id' => ['required', 'exists:clients,id'],
                 'hourly_rate_amount' => ['nullable', 'numeric', 'min:0'],
                 'hourly_rate_currency' => 'required_with:hourly_rate_amount|string|in:'.implode(',', array_column(\App\Enums\Currency::cases(), 'value')),
             ], [
                 'name.required' => 'Project name is required.',
+                'client_id.required' => 'Client is required.',
                 'client_id.exists' => 'Selected client does not exist.',
                 'hourly_rate_amount.numeric' => 'Hourly rate must be a valid number.',
                 'hourly_rate_amount.min' => 'Hourly rate must be at least 0.',
@@ -128,13 +149,33 @@ class ProjectController extends Controller
 
         $project->update([
             'name' => $validated['name'],
-            'client_id' => empty($validated['client_id']) ? null : $validated['client_id'],
+            'client_id' => $validated['client_id'],
             'hourly_rate' => $hourlyRate,
         ]);
 
         InAppNotification::success(__('Project successfully updated.'));
 
-        return to_intended_route('projects.index');
+        // Fetch updated list with filters applied
+        $query = Project::with('client')->withCount('timeEntries');
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function (\Illuminate\Contracts\Database\Query\Builder $q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhereHas('client', function (\Illuminate\Contracts\Database\Query\Builder $clientQuery) use ($search) {
+                        $clientQuery->where('name', 'like', '%'.$search.'%');
+                    });
+            });
+        }
+
+        $projects = $query->paginate(10)->withQueryString();
+
+        return response()
+            ->view('turbo::projects.update', [
+                'project' => $project->fresh(['client'])->loadCount('timeEntries'),
+                'projects' => $projects,
+            ])
+            ->header('Content-Type', 'text/vnd.turbo-stream.html');
     }
 
     public function destroy(Project $project)

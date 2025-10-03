@@ -8,7 +8,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('projects.store') }}" method="POST" class="space-y-6" data-turbo-frame="_top">
+    <form action="{{ route('projects.store') }}" method="POST" class="space-y-6" data-turbo-frame="project-create-form">
       @csrf
 
       <!-- Project Name, Client, and Hourly Rate in One Row -->
@@ -37,7 +37,6 @@
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">{{ __('Client') }}</span>
-            <span class="label-text-alt text-base-content/50">{{ __('Optional') }}</span>
           </label>
           <x-form.search-clients
             searchId="create-project"
