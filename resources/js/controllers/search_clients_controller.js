@@ -30,6 +30,7 @@ export default class extends Controller {
 
         if (q === "") {
             this.resultsTarget.innerHTML = "";
+            this.clearClientId();
             return;
         }
 
@@ -254,5 +255,15 @@ export default class extends Controller {
         if (projectIdInput) {
             projectIdInput.value = "";
         }
+    }
+
+    clearClientId() {
+        const searchId = this.element.dataset.searchId || "main";
+        const clientIdInput = document.getElementById(searchId + "-client-id");
+        if (clientIdInput) {
+            clientIdInput.value = "";
+        }
+        // Also clear project selection when client is cleared
+        this.clearProjectSelection(searchId);
     }
 }

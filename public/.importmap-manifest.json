@@ -66,7 +66,7 @@
     },
     {
         "module": "controllers",
-        "path": "dist/js/controllers/index-d5950187c655bd000897b09fa4bea446a252eb61.js",
+        "path": "dist/js/controllers/index-35b209db95608e34540a6e4d004e77e1638b403f.js",
         "preload": true
     },
     {
@@ -96,12 +96,12 @@
     },
     {
         "module": "controllers/search_clients_controller",
-        "path": "dist/js/controllers/search_clients_controller-b1f057e7734e07a3f2ca483da56d1201f96fe60c.js",
+        "path": "dist/js/controllers/search_clients_controller-587dc9fefc0de409e76fbf0a612c9d3bb5b6592e.js",
         "preload": true
     },
     {
         "module": "controllers/search_projects_controller",
-        "path": "dist/js/controllers/search_projects_controller-b77071d4f676b2141f458cb5ef8022f648b22326.js",
+        "path": "dist/js/controllers/search_projects_controller-8fb87190eb48ac670acc061105cb215f7929d194.js",
         "preload": true
     },
     {

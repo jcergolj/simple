@@ -30,6 +30,7 @@ export default class extends Controller {
 
         if (q === "") {
             this.resultsTarget.innerHTML = "";
+            this.clearProjectId();
             return;
         }
 
@@ -249,5 +250,13 @@ export default class extends Controller {
                 el.classList.remove("bg-primary", "text-primary-content");
             }
         });
+    }
+
+    clearProjectId() {
+        const searchId = this.element.dataset.searchId || "main";
+        const projectIdInput = document.getElementById(searchId + "-project-id");
+        if (projectIdInput) {
+            projectIdInput.value = "";
+        }
     }
 }
