@@ -73,8 +73,6 @@ class ProjectController extends Controller
             'hourly_rate' => $hourlyRate,
         ]);
 
-        InAppNotification::success(__('New project successfully created.'));
-
         // Return JSON response for AJAX requests
         if ($request->wantsJson() || $request->ajax()) {
             return new \Illuminate\Http\JsonResponse([
@@ -152,8 +150,6 @@ class ProjectController extends Controller
             'client_id' => $validated['client_id'],
             'hourly_rate' => $hourlyRate,
         ]);
-
-        InAppNotification::success(__('Project successfully updated.'));
 
         // Fetch updated list with filters applied
         $query = Project::with('client')->withCount('timeEntries');

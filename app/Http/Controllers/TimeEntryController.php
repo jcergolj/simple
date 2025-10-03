@@ -97,8 +97,6 @@ class TimeEntryController extends Controller
             'hourly_rate' => $hourlyRate,
         ]);
 
-        InAppNotification::success(__('New time entry successfully created.'));
-
         Log::channel('time-entries')->info('time-entry-created', $timeEntry->toArray());
 
         // Fetch updated list with filters applied
@@ -160,14 +158,9 @@ class TimeEntryController extends Controller
                 'hourly_rate_currency.required_with' => 'Currency is required when hourly rate is specified.',
             ]);
         } catch (\Illuminate\Validation\ValidationException $exception) {
-            // Redirect back to the correct edit form based on request context
-            if ($request->header('turbo-frame') && str_contains($request->header('turbo-frame'), 'recent-entry-')) {
-                // This is from a recent entry edit
-                throw $exception->redirectTo(route('dashboard'));
-            } else {
-                // This is from the main time entries edit
-                throw $exception->redirectTo(route('turbo.time-entries.edit', $timeEntry));
-            }
+            throw_if($request->header('turbo-frame') && str_contains($request->header('turbo-frame'), 'recent-entry-'), $exception->redirectTo(route('dashboard')));
+            // This is from the main time entries edit
+            throw $exception->redirectTo(route('turbo.time-entries.edit', $timeEntry));
         }
 
         $duration = null;
@@ -194,8 +187,6 @@ class TimeEntryController extends Controller
             'project_id' => $validated['project_id'],
             'hourly_rate' => $hourlyRate,
         ]);
-
-        InAppNotification::success(__('Time entry successfully updated.'));
 
         Log::channel('time-entries')->info('time-entry-updated', $timeEntry->fresh()->toArray());
 

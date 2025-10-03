@@ -51,8 +51,6 @@ class ClientController extends Controller
             'hourly_rate' => $hourlyRate,
         ]);
 
-        InAppNotification::success(__('New client successfully created.'));
-
         // Return JSON response for AJAX requests
         if ($request->wantsJson() || $request->ajax()) {
             return new \Illuminate\Http\JsonResponse([
@@ -107,8 +105,6 @@ class ClientController extends Controller
             'hourly_rate' => $hourlyRate,
         ]);
 
-        InAppNotification::success(__('Client successfully updated.'));
-
         // Fetch updated list with filters applied
         $query = Client::withCount(['projects', 'timeEntries']);
 
@@ -130,6 +126,8 @@ class ClientController extends Controller
     public function destroy(Client $client)
     {
         $client->delete();
+
+        InAppNotification::success(__('Client :name successfully deleted.', ['name' => $client->name]));
 
         return to_intended_route('clients.index');
     }
