@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Models\Project;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Jcergolj\InAppNotifications\Facades\InAppNotification;
 
 class ProjectController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $query = Project::with('client')->withCount('timeEntries');
 
@@ -31,22 +32,19 @@ class ProjectController extends Controller
         return view('projects.index', ['projects' => $projects]);
     }
 
-    public function create()
+    public function create(): View
     {
-        $clients = Client::all();
-
-        return view('projects.create', ['clients' => $clients]);
+        return view('projects.create');
     }
 
-    public function edit(Project $project)
+    public function edit(Project $project): View
     {
         $project->load('client');
-        $clients = Client::all();
 
-        return view('projects.edit', ['project' => $project, 'clients' => $clients]);
+        return view('projects.edit', ['project' => $project]);
     }
 
-    public function destroy(Project $project)
+    public function destroy(Project $project): RedirectResponse
     {
         $projectName = $project->name;
         $project->delete();

@@ -7,13 +7,15 @@ use App\Enums\TimeFormat;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\UpdatePreferencesRequest;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Jcergolj\InAppNotifications\Facades\InAppNotification;
 
 class PreferencesController extends Controller
 {
     /** Shows the preferences form. */
-    public function edit(Request $request)
+    public function edit(Request $request): View
     {
         return view('settings.preferences.edit', [
             'dateFormat' => $request->user()->getPreferredDateFormat(),
@@ -25,7 +27,7 @@ class PreferencesController extends Controller
     }
 
     /** Handles the preferences form submit. */
-    public function update(UpdatePreferencesRequest $request)
+    public function update(UpdatePreferencesRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $user = $request->user();
@@ -51,6 +53,6 @@ class PreferencesController extends Controller
 
         InAppNotification::success(__('Preferences updated.'));
 
-        return back();
+        return to_route('settings.preferences.edit');
     }
 }

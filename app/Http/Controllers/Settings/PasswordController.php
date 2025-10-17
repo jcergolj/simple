@@ -3,33 +3,31 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Settings\UpdatePasswordRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
 use Jcergolj\InAppNotifications\Facades\InAppNotification;
 
 class PasswordController extends Controller
 {
     /** Shows the update password form. */
-    public function edit()
+    public function edit(): View
     {
         return view('settings.password.edit');
     }
 
     /** Handles the update password form submit. */
-    public function update(Request $request)
+    public function update(UpdatePasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'current_password' => ['required', 'string', 'current_password'],
-            'password' => ['required', 'string', 'confirmed', Password::defaults()],
-        ]);
+        $validated = $request->validated();
 
         $request->user()->update([
-            'password' => Hash::make($request->input('password')),
+            'password' => Hash::make($validated['password']),
         ]);
 
         InAppNotification::success(__('Password updated.'));
 
-        return back();
+        return to_route('settings.password.edit');
     }
 }

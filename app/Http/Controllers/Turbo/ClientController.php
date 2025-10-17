@@ -7,20 +7,23 @@ use App\Http\Requests\Turbo\StoreClientRequest;
 use App\Http\Requests\Turbo\UpdateClientRequest;
 use App\Models\Client;
 use App\ValueObjects\Money;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class ClientController extends Controller
 {
-    public function create()
+    public function create(): View
     {
         return view('turbo::clients.create');
     }
 
-    public function store(StoreClientRequest $request)
+    public function store(StoreClientRequest $request): JsonResponse|Response
     {
         $validated = $request->validated();
 
         $hourlyRate = null;
-        if ($validated['hourly_rate_amount']) {
+        if (! empty($validated['hourly_rate_amount'])) {
             $hourlyRate = Money::fromDecimal(
                 amount: (float) $validated['hourly_rate_amount'],
                 currency: $validated['hourly_rate_currency'] ?? 'USD'
@@ -32,9 +35,8 @@ class ClientController extends Controller
             'hourly_rate' => $hourlyRate,
         ]);
 
-        // Return JSON response for AJAX requests
         if ($request->wantsJson() || $request->ajax()) {
-            return new \Illuminate\Http\JsonResponse([
+            return new JsonResponse([
                 'success' => true,
                 'client' => [
                     'id' => $client->id,
@@ -44,7 +46,6 @@ class ClientController extends Controller
             ]);
         }
 
-        // Fetch updated list with filters applied
         $query = Client::withCount(['projects', 'timeEntries']);
 
         if ($request->filled('search')) {
@@ -61,17 +62,17 @@ class ClientController extends Controller
             ->header('Content-Type', 'text/vnd.turbo-stream.html');
     }
 
-    public function edit(Client $client)
+    public function edit(Client $client): View
     {
         return view('turbo::clients.edit', ['client' => $client]);
     }
 
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(UpdateClientRequest $request, Client $client): Response
     {
         $validated = $request->validated();
 
         $hourlyRate = null;
-        if ($validated['hourly_rate_amount']) {
+        if (! empty($validated['hourly_rate_amount'])) {
             $hourlyRate = Money::fromDecimal(
                 amount: (float) $validated['hourly_rate_amount'],
                 currency: $validated['hourly_rate_currency'] ?? 'USD'
@@ -83,7 +84,6 @@ class ClientController extends Controller
             'hourly_rate' => $hourlyRate,
         ]);
 
-        // Fetch updated list with filters applied
         $query = Client::withCount(['projects', 'timeEntries']);
 
         if ($request->filled('search')) {

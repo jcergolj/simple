@@ -2,26 +2,39 @@
 
 namespace Tests\Feature\Auth;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_registration_screen_can_be_rendered(): void
+    #[Test]
+    public function guest_middleware_is_applied(): void
     {
-        $this->get('/register')->assertOk();
+        $response = $this->get(route('register'));
+
+        $response->assertMiddlewareIsApplied('guest');
     }
 
-    public function test_new_users_can_register(): void
+    #[Test]
+    public function registration_screen_can_be_rendered(): void
     {
-        $this->withoutMiddleware()->post(route('register'), [
+        $response = $this->get(route('register'));
+
+        $response->assertOk();
+    }
+
+    #[Test]
+    public function new_users_can_register(): void
+    {
+        $response = $this->withoutMiddleware()->post(route('register'), [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-        ])->assertValid()->assertRedirect(route('dashboard'));
+        ]);
+
+        $response->assertValid()
+            ->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticated();
     }

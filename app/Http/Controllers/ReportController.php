@@ -7,10 +7,11 @@ use App\Models\Project;
 use App\Models\TimeEntry;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ReportController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $query = TimeEntry::with(['client', 'project'])->whereNotNull('end_time');
 
@@ -30,26 +31,27 @@ class ReportController extends Controller
             [$dateFrom, $dateTo] = $this->getDateRange($request->date_range);
         }
 
-        if ($dateFrom) {
-            $query->where('start_time', '>=', Carbon::parse($dateFrom));
+        // Parse dates to Carbon instances
+        $dateFromCarbon = $dateFrom ? Carbon::parse($dateFrom) : null;
+        $dateToCarbon = $dateTo ? Carbon::parse($dateTo) : null;
+
+        if ($dateFromCarbon instanceof \Carbon\Carbon) {
+            $query->where('start_time', '>=', $dateFromCarbon);
         }
 
-        if ($dateTo) {
-            $query->where('start_time', '<=', Carbon::parse($dateTo)->endOfDay());
+        if ($dateToCarbon instanceof \Carbon\Carbon) {
+            $query->where('start_time', '<=', $dateToCarbon->endOfDay());
         }
 
         $timeEntries = $query->latest('start_time')->get();
 
         $totalHours = $timeEntries->sum('duration') / 3600;
-        
+
         // Group earnings by currency for proper totals
-        $earningsByCurrency = $timeEntries->map(function ($entry) {
-            return $entry->calculateEarnings();
-        })->filter()->groupBy(function ($earnings) {
-            return $earnings->currency->value;
-        })->map(function ($currencyEarnings) {
+        $earningsByCurrency = $timeEntries->map(fn ($entry) => $entry->calculateEarnings())->filter()->groupBy(fn ($earnings) => $earnings->currency->value)->map(function ($currencyEarnings) {
             $currency = $currencyEarnings->first()->currency;
             $totalAmount = $currencyEarnings->sum('amount');
+
             return new \App\ValueObjects\Money($totalAmount, $currency);
         });
 
@@ -64,15 +66,12 @@ class ReportController extends Controller
             }
 
             $hours = $entries->sum('duration') / 3600;
-            
+
             // Group project earnings by currency
-            $projectEarningsByCurrency = $entries->map(function ($entry) {
-                return $entry->calculateEarnings();
-            })->filter()->groupBy(function ($earnings) {
-                return $earnings->currency->value;
-            })->map(function ($currencyEarnings) {
+            $projectEarningsByCurrency = $entries->map(fn ($entry) => $entry->calculateEarnings())->filter()->groupBy(fn ($earnings) => $earnings->currency->value)->map(function ($currencyEarnings) {
                 $currency = $currencyEarnings->first()->currency;
                 $totalAmount = $currencyEarnings->sum('amount');
+
                 return new \App\ValueObjects\Money($totalAmount, $currency);
             });
 
@@ -98,8 +97,8 @@ class ReportController extends Controller
             'projectTotals' => $projectTotals,
             'clients' => $clients,
             'projects' => $projects,
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
+            'dateFrom' => $dateFromCarbon,
+            'dateTo' => $dateToCarbon,
         ]);
     }
 

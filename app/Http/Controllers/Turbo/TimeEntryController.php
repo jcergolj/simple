@@ -32,7 +32,7 @@ class TimeEntryController extends Controller
         }
 
         $hourlyRate = null;
-        if ($validated['hourly_rate_amount']) {
+        if (! empty($validated['hourly_rate_amount'])) {
             $hourlyRate = Money::fromDecimal(
                 amount: (float) $validated['hourly_rate_amount'],
                 currency: $validated['hourly_rate_currency'] ?? 'USD'
@@ -105,7 +105,7 @@ class TimeEntryController extends Controller
         }
 
         $hourlyRate = null;
-        if ($validated['hourly_rate_amount']) {
+        if (! empty($validated['hourly_rate_amount'])) {
             $hourlyRate = Money::fromDecimal(
                 amount: (float) $validated['hourly_rate_amount'],
                 currency: $validated['hourly_rate_currency'] ?? 'USD'

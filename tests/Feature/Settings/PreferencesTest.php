@@ -7,14 +7,35 @@ use App\View\Components\UserDate;
 use App\View\Components\UserDatetime;
 use App\View\Components\UserTime;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\App\Http\Controllers\Settings\PreferencesController::class)]
 class PreferencesTest extends TestCase
 {
-    use RefreshDatabase;
+    #[Test]
+    public function auth_middleware_is_applied_for_edit(): void
+    {
+        $response = $this->get(route('settings.preferences.edit'));
 
-    public function test_user_can_view_preferences_page(): void
+        $response->assertMiddlewareIsApplied('auth');
+    }
+
+    #[Test]
+    public function auth_middleware_is_applied_for_update(): void
+    {
+        User::factory()->create();
+
+        $response = $this->put(route('settings.preferences.update'), [
+            'date_format' => 'us',
+            'time_format' => '12',
+        ]);
+
+        $response->assertMiddlewareIsApplied('auth');
+    }
+
+    #[Test]
+    public function user_can_view_preferences_page(): void
     {
         $user = User::factory()->create();
 

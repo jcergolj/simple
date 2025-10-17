@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\TimeEntry;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ReportExportController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
         $query = TimeEntry::with(['client', 'project'])->whereNotNull('end_time');
 
@@ -40,11 +41,7 @@ class ReportExportController extends Controller
         $totalHours = $timeEntries->sum('duration') / 3600;
 
         // Group earnings by currency for proper totals
-        $earningsByCurrency = $timeEntries->map(function ($entry) {
-            return $entry->calculateEarnings();
-        })->filter()->groupBy(function ($earnings) {
-            return $earnings->currency->value;
-        })->map(function ($currencyEarnings) {
+        $earningsByCurrency = $timeEntries->map(fn ($entry) => $entry->calculateEarnings())->filter()->groupBy(fn ($earnings) => $earnings->currency->value)->map(function ($currencyEarnings) {
             $currency = $currencyEarnings->first()->currency;
             $totalAmount = $currencyEarnings->sum('amount');
 
@@ -62,11 +59,7 @@ class ReportExportController extends Controller
             $hours = $entries->sum('duration') / 3600;
 
             // Group project earnings by currency
-            $projectEarningsByCurrency = $entries->map(function ($entry) {
-                return $entry->calculateEarnings();
-            })->filter()->groupBy(function ($earnings) {
-                return $earnings->currency->value;
-            })->map(function ($currencyEarnings) {
+            $projectEarningsByCurrency = $entries->map(fn ($entry) => $entry->calculateEarnings())->filter()->groupBy(fn ($earnings) => $earnings->currency->value)->map(function ($currencyEarnings) {
                 $currency = $currencyEarnings->first()->currency;
                 $totalAmount = $currencyEarnings->sum('amount');
 
@@ -127,9 +120,7 @@ class ReportExportController extends Controller
 
             foreach ($projectTotals as $projectTotal) {
                 // Format project earnings by currency
-                $earningsDisplay = $projectTotal['earningsByCurrency']->map(function ($money) {
-                    return $money->formattedForCsv();
-                })->implode(' + ');
+                $earningsDisplay = $projectTotal['earningsByCurrency']->map(fn ($money) => $money->formattedForCsv())->implode(' + ');
 
                 $csv .= sprintf(
                     "%s,%s,%d,%.2f,%s\n",

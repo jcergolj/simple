@@ -6,29 +6,32 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\TimeEntry;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\App\Http\Controllers\DashboardController::class)]
 class DashboardTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_guests_are_redirected_to_the_login_page(): void
+    #[Test]
+    public function auth_middleware_is_applied(): void
     {
-        $response = $this->get('/dashboard');
-        $response->assertRedirect('/login');
+        $response = $this->get(route('dashboard'));
+
+        $response->assertMiddlewareIsApplied('auth');
     }
 
-    public function test_authenticated_users_can_visit_the_dashboard(): void
+    #[Test]
+    public function authenticated_users_can_visit_the_dashboard(): void
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
 
-        $response = $this->get('/dashboard');
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
         $response->assertOk();
     }
 
-    public function test_start_buttons_are_disabled_when_timer_is_running(): void
+    #[Test]
+    public function start_buttons_are_disabled_when_timer_is_running(): void
     {
         $user = User::factory()->create();
         $client = Client::factory()->create();
@@ -51,15 +54,16 @@ class DashboardTest extends TestCase
             'project_id' => $project->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/dashboard');
+        $response = $this->actingAs($user)->get(route('dashboard'));
 
-        $response->assertOk();
-        $response->assertSee('Another timer is running');
-        $response->assertSee('disabled');
-        $response->assertSee('cursor-not-allowed');
+        $response->assertOk()
+            ->assertSee('Another timer is running')
+            ->assertSee('disabled')
+            ->assertSee('cursor-not-allowed');
     }
 
-    public function test_start_buttons_are_enabled_when_no_timer_is_running(): void
+    #[Test]
+    public function start_buttons_are_enabled_when_no_timer_is_running(): void
     {
         $user = User::factory()->create();
         $client = Client::factory()->create();
@@ -74,11 +78,11 @@ class DashboardTest extends TestCase
             'duration' => 3600,
         ]);
 
-        $response = $this->actingAs($user)->get('/dashboard');
+        $response = $this->actingAs($user)->get(route('dashboard'));
 
-        $response->assertOk();
-        $response->assertDontSee('Another timer is running');
-        $response->assertDontSee('cursor-not-allowed');
-        $response->assertSee('bg-green-100');
+        $response->assertOk()
+            ->assertDontSee('Another timer is running')
+            ->assertDontSee('cursor-not-allowed')
+            ->assertSee('bg-green-100');
     }
 }

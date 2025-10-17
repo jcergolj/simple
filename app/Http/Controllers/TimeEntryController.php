@@ -6,12 +6,14 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\TimeEntry;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Jcergolj\InAppNotifications\Facades\InAppNotification;
 
 class TimeEntryController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $query = TimeEntry::with(['client', 'project']);
 
@@ -41,7 +43,7 @@ class TimeEntryController extends Controller
         return view('time-entries.index', ['timeEntries' => $timeEntries, 'clients' => $clients, 'projects' => $projects]);
     }
 
-    public function destroy(Request $request, TimeEntry $timeEntry)
+    public function destroy(Request $request, TimeEntry $timeEntry): RedirectResponse
     {
         $timeEntry->delete();
 
